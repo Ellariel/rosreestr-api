@@ -222,15 +222,15 @@ class RosreestrAPIClient:
             logger.info('Regions were downloaded')
         return self._macro_regions_to_regions
 
-    def get_region_types(self, region_id: str):
-        response = self._http_client.get(self.REGION_TYPES_URL.format(region_id))
+    def get_region_types(self, region_id: str, **kwargs):
+        response = self._http_client.get(self.REGION_TYPES_URL.format(region_id), **kwargs)
         return self._get_response_body(response)
 
-    def get_objects_by_right(self, region_number: str, right_number: str):
+    def get_objects_by_right(self, region_number: str, right_number: str, **kwargs):
         url = self.SEARCH_OBJECTS_BY_RIGHT_URL.format(region_number, quote_plus(right_number))
-        return self._get_response_body(self._http_client.get(url))
+        return self._get_response_body(self._http_client.get(url, **kwargs))
 
-    def get_objects_by_address(self, address_wrapper: AddressWrapper):
+    def get_objects_by_address(self, address_wrapper: AddressWrapper, **kwargs):
         macro_region_id = address_wrapper.macro_region_id
         if not address_wrapper.macro_region_id:
             macro_region_name = address_wrapper.macro_region_name.lower()
@@ -257,7 +257,7 @@ class RosreestrAPIClient:
 
         logger.info(f'search_objects_url: {search_objects_url}')
         logger.info('Trying to download rosreestr objects')
-        response = self._http_client.get(search_objects_url)
+        response = self._http_client.get(search_objects_url, **kwargs)
 
         objects = self._get_response_body(response)
         if objects:
@@ -267,11 +267,11 @@ class RosreestrAPIClient:
         else:
             return []
 
-    def get_object(self, obj_id: str):
+    def get_object(self, obj_id: str, **kwargs):
         obj_id = _strip_cadastral_id(obj_id)
         url = self.SEARCH_DETAILED_OBJECT_BY_ID.format(obj_id)
         logger.info(f'Trying to download detailed object, object_id: {obj_id}')
-        response = self._http_client.get(url)
+        response = self._http_client.get(url, **kwargs)
         logger.info(f'Detailed object was downloaded, object_id: {obj_id}')
         return self._get_response_body(response)
 
@@ -298,22 +298,22 @@ class PKKRosreestrAPIClient:
     def __init__(self, timeout=5, keep_alive=False):
         self._http_client = HTTPClient(timeout=timeout, keep_alive=keep_alive)
 
-    def get_parcel_by_coordinates(self, *, lat, long, limit=11, tolerance=2) -> dict:
+    def get_parcel_by_coordinates(self, *, lat, long, limit=11, tolerance=2, **kwargs) -> dict:
         url = self.SEARCH_PARCEL_BY_COORDINATES_URL.format(
             lat=lat, long=long, limit=limit, tolerance=tolerance)
-        return self._http_client.get(url).json()
+        return self._http_client.get(url, **kwargs).json()
 
-    def get_parcel_by_cadastral_id(self, cadastral_id, limit=11, tolerance=2) -> dict:
+    def get_parcel_by_cadastral_id(self, cadastral_id, limit=11, tolerance=2, **kwargs) -> dict:
         url = self.SEARCH_PARCEL_BY_CADASTRAL_ID_URL.format(
             cadastral_id=cadastral_id, limit=limit, tolerance=tolerance)
-        return self._http_client.get(url).json()
+        return self._http_client.get(url, **kwargs).json()
 
-    def get_building_by_cadastral_id(self, cadastral_id, limit=11, tolerance=2) -> dict:
+    def get_building_by_cadastral_id(self, cadastral_id, limit=11, tolerance=2, **kwargs) -> dict:
         url = self.SEARCH_BUILDING_BY_CADASTRAL_ID_URL.format(
             cadastral_id=cadastral_id, limit=limit, tolerance=tolerance)
-        return self._http_client.get(url).json()
+        return self._http_client.get(url, **kwargs).json()
 
-    def get_building_by_coordinates(self, *, lat, long, limit=11, tolerance=2) -> dict:
+    def get_building_by_coordinates(self, *, lat, long, limit=11, tolerance=2, **kwargs) -> dict:
         url = self.SEARCH_BUILDING_BY_COORDINATES_URL.format(
             lat=lat, long=long, limit=limit, tolerance=tolerance)
-        return self._http_client.get(url).json()
+        return self._http_client.get(url, **kwargs).json()
