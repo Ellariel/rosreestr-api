@@ -78,9 +78,12 @@ class HTTPClient:
         timeout = kwargs.pop('timeout', self.timeout)
 
         headers = self.default_headers.copy()
-        headers.update(kwargs.pop('headers', {}))
-
-        request = requests.Request(method, url, headers=headers, **kwargs)
+        headers.update(kwargs.pop('headers', {}))   
+        
+        proxies = kwargs.pop('proxies', {})
+        session.proxies = proxies
+        
+        request = requests.Request(method, url, headers=headers)
         prepared_request = request.prepare()
         self._log_request(method, url, prepared_request.body)
         start_time = time.time()
