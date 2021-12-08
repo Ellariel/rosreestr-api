@@ -81,14 +81,15 @@ class HTTPClient:
         headers.update(kwargs.pop('headers', {}))   
         
         proxies = kwargs.pop('proxies', {})
-        session.proxies = proxies
+        print(proxies)
+        #session.proxies = proxies
         
         request = requests.Request(method, url, headers=headers)
         prepared_request = request.prepare()
         self._log_request(method, url, prepared_request.body)
         start_time = time.time()
         try:
-            response = session.send(prepared_request, timeout=timeout)
+            response = session.send(prepared_request, timeout=timeout, proxies=proxies)
             duration = time.time() - start_time
             if response.status_code >= 400:
                 log_method = logging.error
