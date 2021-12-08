@@ -81,7 +81,8 @@ class HTTPClient:
         headers.update(kwargs.pop('headers', {}))   
         
         proxies = kwargs.pop('proxies', {})
-        print(proxies)
+        if 'http' in proxies:
+            print(f'proxies: {proxies}')
         #session.proxies = proxies
         
         request = requests.Request(method, url, headers=headers)
